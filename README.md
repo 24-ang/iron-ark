@@ -1,3 +1,6 @@
+
+
+```markdown
 # Iron Ark: Wasteland Chronicles
 
 > **A post-apocalyptic text-based RPG powered by Google Gemini**
@@ -32,37 +35,53 @@
    ```bash
    git clone [https://github.com/24-ang/iron-ark.git](https://github.com/24-ang/iron-ark.git)
    cd iron-ark
-Install dependencies:
 
-Bash
+```
+
+2. Install dependencies:
+```bash
 npm install
-Configure environment: Create a .env.local file and add your API key:
 
-代码段
+```
+
+
+3. Configure environment:
+Create a `.env.local` file and add your API key:
+```env
 VITE_GEMINI_API_KEY=your_gemini_key_here
-Start development server:
 
-Bash
+```
+
+
+4. Start development server:
+```bash
 npm run dev
-🎯 Game Mechanics
-Survival System: Manage HP, stamina, and mental state.
 
-Dynamic World: AI-generated events and encounters based on user choices.
+```
 
-Inventory Management: Collect and use items in the wasteland.
 
-Story Branches: Your choices shape the narrative in real-time.
 
-🤝 Contributing & Credits
-📢 Acknowledgments
-Core Logic based on: DXC by MikuLXK
+## 🎯 Game Mechanics
 
-My Contribution: This project is a UI/UX Redesign Variant focused on immersive storytelling. While retaining the excellent Gemini narrative engine from the original DXC project, I have:
+* **Survival System**: Manage HP, stamina, and mental state.
+* **Dynamic World**: AI-generated events and encounters based on user choices.
+* **Inventory Management**: Collect and use items in the wasteland.
+* **Story Branches**: Your choices shape the narrative in real-time.
 
-Redesigned the entire interface into a "Wasteland Terminal" style.
+## 🤝 Contributing & Credits
 
-Optimized the visual hierarchy for better player immersion.
+### 📢 Acknowledgments
 
-Refined the prompt engineering for a darker, post-apocalyptic tone.
+> **Core Logic based on:** [DXC](https://github.com/MikuLXK/DXC) by **MikuLXK**
 
-Made with ❤️ for the wasteland survivors
+**My Contribution:**
+This project is a **UI/UX Redesign Variant** focused on immersive storytelling. While retaining the excellent Gemini narrative engine from the original DXC project, I have:
+
+* Redesigned the entire interface into a **"Wasteland Terminal"** style.
+* Optimized the visual hierarchy for better player immersion.
+* Refined the prompt engineering for a darker, post-apocalyptic tone.
+
+---
+
+**Made with ❤️ for the wasteland survivors**
+

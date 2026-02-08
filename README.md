@@ -2,9 +2,9 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# DXC - Wasteland Chronicles
+# iron-ark- - Wasteland Chronicles
 
-**DXC** 是一个以废土世界为背景的沉浸式 AI 文字冒险/游戏主持系统。项目以"叙事-指令分离"的 JSON 协议为核心，结合完整的世界观、判定规则与写作约束，生成一致且可追溯的剧情与状态更新，并提供战斗面板、记忆系统、战利品管理等完整游玩闭环。
+**iron-ark-** 是一个以废土世界为背景的沉浸式 AI 文字冒险/游戏主持系统。项目以"叙事-指令分离"的 JSON 协议为核心，结合完整的世界观、判定规则与写作约束，生成一致且可追溯的剧情与状态更新，并提供战斗面板、记忆系统、战利品管理等完整游玩闭环。
 
 ## 主要特性
 

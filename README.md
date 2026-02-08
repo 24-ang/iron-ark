@@ -1,6 +1,5 @@
 
 
-```markdown
 # Iron Ark: Wasteland Chronicles
 
 > **A post-apocalyptic text-based RPG powered by Google Gemini**

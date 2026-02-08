@@ -1,65 +1,102 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Iron Ark: Wasteland Chronicles
 
-# DXC - Wasteland Chronicles
+> **A post-apocalyptic text-based RPG powered by AI**
 
-**DXC** 是一个以废土世界为背景的沉浸式 AI 文字冒险/游戏主持系统。项目以"叙事-指令分离"的 JSON 协议为核心，结合完整的世界观、判定规则与写作约束，生成一致且可追溯的剧情与状态更新，并提供战斗面板、记忆系统、战利品管理等完整游玩闭环。
+**Iron Ark** is an immersive AI-driven text adventure game set in a wasteland world. Built with a "narrative-instruction separation" architecture, it leverages advanced AI to deliver dynamic storytelling and complex state management.
 
-## 主要特性
+## 🎮 Game Features
 
-- **叙事与指令严格分离**：logs 只负责叙事与对白，状态变更仅通过 tavern_commands
-- **COT 双段思考**：thinking_pre 规划、thinking_post 校验，确保叙事与指令一致
-- **模块化提示词体系**：世界观/规则/写作/判定/生理/战利品等拆分管理，易维护、易扩展
-- **战斗与结算流程**：战斗面板、敌方状态、掉落与经验结算等完整闭环
-- **记忆系统**：短期/中期/长期记忆压缩与回写，支持剧情连续性
-- **可视化交互**：回合日志、AI 思考展示、快速行动选项、设置与存档管理
+- **AI-Powered Narrative Engine**: Dynamic story generation with context-aware responses
+- **Strict Narrative-Instruction Separation**: Logs for storytelling, Tavern Commands for state changes
+- **Chain-of-Thought Reasoning**: Pre-planning and post-validation ensure logical consistency
+- **Modular Prompt System**: World-building, rules, writing style, and loot systems
+- **Immersive Terminal UI**: Wasteland-themed green terminal interface with AI thinking process visualization
 
-## 技术栈
+## 🛠️ Tech Stack
 
-- React + TypeScript
-- Vite
-- Tailwind CSS
-- Lucide Icons
-- **Gemini API** - 核心AI叙事引擎
+- **Frontend**: React + TypeScript + Vite
+- **Styling**: Tailwind CSS + Lucide Icons
+- **AI Integration**: Gemini API (current version)
+- **State Management**: Custom hooks and context
 
-## 目录结构
+## 📁 Project Structure
 
-- `components/`：界面与交互组件（含战斗、日志、设置等）
-- `prompts/`：核心提示词模块（规则、世界观、写作、判定等）
-- `types/`：类型定义与数据结构
-- `utils/`：数据映射与工具函数
-- `public/`：静态资源
+```
+├── components/          # UI components (combat panels, terminal logs, etc.)
+├── prompts/            # Core prompt modules
+├── types/              # TypeScript type definitions
+├── utils/              # API adapters and data mapping
+└── public/             # Static assets
+```
 
-## 本地运行
+## 🚀 Getting Started
 
-**环境要求：** Node.js
+### Prerequisites
 
-1. 安装依赖：
-   ```bash
-   npm install
-   ```
-2. 在 `.env.local` 中设置 `GEMINI_API_KEY`（或在设置面板内配置其他模型/服务）
-3. 启动开发服务器：
-   ```bash
-   npm run dev
-   ```
+- Node.js 18+
+- Gemini API key
 
-## Gemini API Developer Competition 2026
+### Installation
 
-本项目为 **Gemini API Developer Competition 2026** 参赛作品，展示了Gemini API在：
+1. Clone the repository:
 
-- 复杂叙事生成
-- 多层次游戏状态管理
-- 动态剧情分支
-- AI驱动的废土世界模拟
+```bash
+git clone https://github.com/24-ang/iron-ark.git
+cd iron-ark
+```
 
-方面的创新应用。
+2. Install dependencies:
 
-## 相关链接
+```bash
+npm install
+```
 
-- GitHub：`https://github.com/MikuLXK/DXC`
+3. Configure environment:
+   Create a `.env.local` file and add your API key:
+
+```env
+VITE_GEMINI_API_KEY=your_key_here
+```
+
+4. Start development server:
+
+```bash
+npm run dev
+```
+
+## 🎯 Game Mechanics
+
+- **Survival System**: Manage HP, stamina, and mental state
+- **Dynamic World**: AI-generated events and encounters
+- **Inventory Management**: Collect and use items in the wasteland
+- **Character Progression**: Level up and develop your character
+- **Story Branches**: Your choices shape the narrative
+
+## 📝 Development Status
+
+This project is actively being developed. Current features include:
+
+- ✅ Core narrative engine
+- ✅ Combat system
+- ✅ Inventory management
+- ✅ Character stats and progression
+- ✅ Mobile-responsive UI
+- ✅ Localized UI (English)
+
+## 🤝 Contributing
+
+This is a personal project, but suggestions and feedback are welcome!
+
+## 📄 License
+
+This project is for educational and demonstration purposes.
+
+## 🙏 Acknowledgments
+
+- Original concept inspired by classic text-based RPGs
+- UI design influenced by retro terminal aesthetics
+- Built with modern web technologies
 
 ---
 
-> ⚠️ **开发说明**：本项目基于原有TRPG系统改造为废土主题。核心AI架构保持不变，世界观与叙事内容已全面适配废土设定。
+**Made with ❤️ for the wasteland survivors**

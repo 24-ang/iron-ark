@@ -1,8 +1,14 @@
 # Iron Ark: Wasteland Chronicles
 
+<<<<<<< HEAD
 > **A post-apocalyptic text-based RPG powered by AI**
 
 **Iron Ark** is an immersive AI-driven text adventure game set in a wasteland world. Built with a "narrative-instruction separation" architecture, it leverages advanced AI to deliver dynamic storytelling and complex state management.
+=======
+# iron-ark- - Wasteland Chronicles
+
+**iron-ark-** 是一个以废土世界为背景的沉浸式 AI 文字冒险/游戏主持系统。项目以"叙事-指令分离"的 JSON 协议为核心，结合完整的世界观、判定规则与写作约束，生成一致且可追溯的剧情与状态更新，并提供战斗面板、记忆系统、战利品管理等完整游玩闭环。
+>>>>>>> ca887da957658f3307021b36ee89268a96684180
 
 ## 🎮 Game Features
 

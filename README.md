@@ -30,7 +30,7 @@ This project showcases the power of **Gemini 3 API** through:
 
 ## 🛠️ Tech Stack
 
-- **AI Engine**: Google Gemini 3 API 
+- **AI Engine**: Google Gemini 3 API
 - **Frontend**: React 18 + TypeScript + Vite
 - **Styling**: Tailwind CSS + Lucide Icons
 - **State Management**: Custom hooks with React Context
@@ -85,7 +85,9 @@ npm run dev
 
 ## 🎬 Demo & Screenshots
 
-> **Live Demo**: [Try Iron Ark](https://github.com/24-ang/iron-ark) _(Installation required)_
+> **📺 Gameplay Demo Video**: [Watch on YouTube](#) _(Coming soon)_
+
+> **Installation Guide**: See [Getting Started](#-getting-started) section below
 
 ### Key Features in Action
 

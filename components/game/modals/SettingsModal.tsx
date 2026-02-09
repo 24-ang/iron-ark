@@ -3,6 +3,7 @@ import { X, Settings as SettingsIcon, Cpu, LayoutList, FileText, Brain, Volume2,
 import { AppSettings, GameState } from '../../../types';
 import { SettingsAIServices } from './settings/SettingsAIServices';
 import { SettingsContext } from './settings/SettingsContext';
+import { useLanguage } from '../LanguageContext';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onUpdateGameState,
   initialView,
 }) => {
+  const { language, toggleLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState<TabView>((initialView as TabView) || 'AI');
   const [formData, setFormData] = useState<AppSettings>(settings);
   const [volume, setVolume] = useState(70);
@@ -129,23 +131,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <SettingsAIServices
                 settings={formData.aiConfig}
                 onUpdate={(newAIConfig) => handleUpdateSettings({ ...formData, aiConfig: newAIConfig })}
-                onSave={(newAIConfig) => {
-                  handleUpdateSettings({ ...formData, aiConfig: newAIConfig });
-                  onSaveSettings({ ...formData, aiConfig: newAIConfig });
-                }}
               />
             </div>
           )}
 
           {activeTab === 'CONTEXT' && (
-            <div className="h-full wasteland-settings-context">
-              <SettingsContext
-                settings={formData}
-                onUpdate={handleUpdateSettings}
-                gameState={gameState}
-                onUpdateGameState={onUpdateGameState}
-              />
-            </div>
+            <SettingsContext
+              settings={formData}
+              onUpdate={handleUpdateSettings}
+              gameState={gameState}
+              onUpdateGameState={onUpdateGameState}
+            />
           )}
 
           {activeTab === 'PROMPTS' && (
@@ -239,6 +235,25 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <Palette size={20} />
                   APPEARANCE
                 </h3>
+                
+                {/* Language Settings */}
+                <div className="mb-4 pb-4 border-b border-steel-gray">
+                   <label className="terminal-text text-sm text-gray mb-2 block">INTERFACE LANGUAGE</label>
+                   <div className="flex items-center gap-4">
+                      <button
+                        onClick={() => language !== 'en' && toggleLanguage()}
+                        className={`flex-1 py-2 border-2 transition-all font-bold ${language === 'en' ? 'border-cta text-cta bg-cta/10' : 'border-gray text-gray hover:border-cta hover:text-cta'}`}
+                      >
+                         ENGLISH
+                      </button>
+                      <button
+                        onClick={() => language !== 'zh' && toggleLanguage()}
+                        className={`flex-1 py-2 border-2 transition-all font-bold ${language === 'zh' ? 'border-cta text-cta bg-cta/10' : 'border-gray text-gray hover:border-cta hover:text-cta'}`}
+                      >
+                         中文 (CHINESE)
+                      </button>
+                   </div>
+                </div>
                 
                 {/* Avatar Upload */}
                 <div>

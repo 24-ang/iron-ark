@@ -2,6 +2,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { CombatState, CharacterStats, Skill, TechArt, InventoryItem, Enemy } from '../../types';
 import { Target, Shield, Zap, XCircle, Heart, Skull, Clock, Activity, AlertTriangle } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Swords, Crosshair, Sword, Package, MessageSquare, X } from 'lucide-react';
 
@@ -22,6 +23,7 @@ export const CombatPanel: React.FC<CombatPanelProps> = ({
   inventory = [],
   onPlayerAction 
 }) => {
+  const { t } = useLanguage();
   const [menuLevel, setMenuLevel] = useState<'MAIN' | 'SKILLS' | 'ITEMS' | 'TALK'>('MAIN');
   const [freeActionInput, setFreeActionInput] = useState('');
   const enemies = useMemo(() => {
@@ -56,7 +58,7 @@ export const CombatPanel: React.FC<CombatPanelProps> = ({
       }
   }, [enemies, selectedEnemyId]);
 
-  if (enemies.length === 0) return <div className="p-10 text-white animate-pulse">扫描敌对目标中...</div>;
+  if (enemies.length === 0) return <div className="p-10 text-white animate-pulse">{t("SCANNING_ENEMIES")}</div>;
 
   const validConsumables = inventory.filter(i => i.类型 === 'consumable');
 
@@ -113,9 +115,9 @@ export const CombatPanel: React.FC<CombatPanelProps> = ({
           <div className="flex items-center justify-between text-xs uppercase tracking-[0.35em] text-red-400 font-bold">
               <div className="flex items-center gap-2">
                   <Swords size={14} />
-                  敌对单位
+                  {t("HOSTILES")}
               </div>
-              <span className="text-red-500/70">数量: {enemies.length}</span>
+              <span className="text-red-500/70">{t("COUNT")}: {enemies.length}</span>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-4 md:gap-6 min-h-0">
@@ -148,15 +150,15 @@ export const CombatPanel: React.FC<CombatPanelProps> = ({
                                               {enemy.名称}
                                           </div>
                                           <div className="flex items-center gap-2 mt-1">
-                                              <span className="text-[10px] font-mono text-red-300 border border-red-900 px-1">等级 {enemy.等级 || '?'}</span>
-                                              <span className="text-[10px] font-mono text-zinc-500">攻击 {enemy.攻击力 ?? '??'}</span>
+                                              <span className="text-[10px] font-mono text-red-300 border border-red-900 px-1">{t("LEVEL")} {enemy.等级 || '?'}</span>
+                                              <span className="text-[10px] font-mono text-zinc-500">{t("ATK")} {enemy.攻击力 ?? '??'}</span>
                                           </div>
                                       </div>
                                   </div>
                                   <div className="space-y-2">
                                       <div>
                                           <div className="flex justify-between text-[10px] text-red-300 font-bold mb-1">
-                                              <span>生命</span>
+                                              <span>{t("HP")}</span>
                                               <span>{Math.round(hpPercent)}%</span>
                                           </div>
                                           <div className="w-full h-3 bg-black border border-red-900 overflow-hidden">
@@ -166,7 +168,7 @@ export const CombatPanel: React.FC<CombatPanelProps> = ({
                                       {mp && (
                                           <div>
                                               <div className="flex justify-between text-[10px] text-purple-300 font-bold mb-1">
-                                                  <span>精神</span>
+                                                  <span>{t("MP")}</span>
                                                   <span>{Math.round(mpPercent)}%</span>
                                               </div>
                                               <div className="w-full h-2 bg-black border border-purple-900 overflow-hidden">
@@ -190,19 +192,19 @@ export const CombatPanel: React.FC<CombatPanelProps> = ({
                           <Skull size={32} />
                       </div>
                       <div>
-                          <div className="text-[10px] uppercase tracking-[0.4em] text-red-400">锁定目标</div>
+                          <div className="text-[10px] uppercase tracking-[0.4em] text-red-400">{t("LOCKED_TARGET")}</div>
                           <div className="text-white font-display text-2xl uppercase tracking-wider">{selectedEnemy?.名称}</div>
                       </div>
                   </div>
                   <div className="text-xs text-zinc-400 font-serif leading-relaxed border-t border-red-900/40 pt-3 min-h-[72px]">
-                      "{selectedEnemy?.描述 || '敌意正在凝聚。'}"
+                      "{selectedEnemy?.描述 || t("DEFAULT_ENEMY_DESC")}"
                   </div>
                   <div className="flex flex-wrap gap-2 text-[10px] text-zinc-300">
-                      <span className="border border-red-900 px-2 py-0.5">攻击力: {selectedEnemy?.攻击力 ?? '??'}</span>
-                      <span className="border border-red-900 px-2 py-0.5">等级: {selectedEnemy?.等级 ?? '?'}</span>
+                      <span className="border border-red-900 px-2 py-0.5">{t("ATK")}: {selectedEnemy?.攻击力 ?? '??'}</span>
+                      <span className="border border-red-900 px-2 py-0.5">{t("LEVEL")}: {selectedEnemy?.等级 ?? '?'}</span>
                   </div>
                   <div className="border-t border-red-900/40 pt-3">
-                      <div className="text-[10px] uppercase tracking-[0.35em] text-red-400 mb-2">技能档案</div>
+                      <div className="text-[10px] uppercase tracking-[0.35em] text-red-400 mb-2">{t("SKILL_ARCHIVE")}</div>
                       {selectedEnemy?.技能 && selectedEnemy.技能.length > 0 ? (
                           <div className="flex flex-wrap gap-1">
                               {selectedEnemy.技能.map((skill, i) => (
@@ -212,7 +214,7 @@ export const CombatPanel: React.FC<CombatPanelProps> = ({
                               ))}
                           </div>
                       ) : (
-                          <div className="text-[10px] text-zinc-500 italic">暂无可识别技能</div>
+                          <div className="text-[10px] text-zinc-500 italic">{t("NO_SKILLS")}</div>
                       )}
                   </div>
               </div>
@@ -223,10 +225,10 @@ export const CombatPanel: React.FC<CombatPanelProps> = ({
       <div className="h-10 bg-red-950/30 border-y border-red-900 flex items-center justify-between px-4 md:px-6 z-20 backdrop-blur-md shrink-0">
          <div className="text-red-500 font-bold text-sm uppercase tracking-widest flex items-center gap-2">
              <Activity size={16} className="animate-pulse" />
-             战斗进行中
+             {t("COMBAT_IN_PROGRESS")}
          </div>
          <div className="text-zinc-400 font-mono text-xs truncate max-w-[50%]">
-             记录: {combatState.战斗记录[combatState.战斗记录.length - 1] || "战斗开始"}
+             {t("COMBAT_LOG")}: {combatState.战斗记录[combatState.战斗记录.length - 1] || t("COMBAT_START")}
          </div>
       </div>
 
@@ -243,15 +245,15 @@ export const CombatPanel: React.FC<CombatPanelProps> = ({
              </div>
              <div className="text-[10px] uppercase tracking-[0.35em] text-zinc-500 flex items-center gap-2">
                  <Target size={12} className="text-red-500" />
-                 目标: {selectedEnemy?.名称 || '无'}
+                 {t("TARGET")}: {selectedEnemy?.名称 || '无'}
              </div>
              <div className="space-y-3">
                  <div className="relative">
-                     <div className="flex justify-between text-[10px] text-green-500 font-bold mb-0.5"><span>生命</span><span>{playerStats.生命值}/{playerStats.最大生命值}</span></div>
+                     <div className="flex justify-between text-[10px] text-green-500 font-bold mb-0.5"><span>{t("HP")}</span><span>{playerStats.生命值}/{playerStats.最大生命值}</span></div>
                      <div className="h-2 bg-zinc-800"><div className="h-full bg-green-600" style={{ width: `${(playerStats.生命值/playerStats.最大生命值)*100}%`}} /></div>
                  </div>
                  <div className="relative">
-                     <div className="flex justify-between text-[10px] text-purple-500 font-bold mb-0.5"><span>精神</span><span>{playerStats.精神力}/{playerStats.最大精神力}</span></div>
+                     <div className="flex justify-between text-[10px] text-purple-500 font-bold mb-0.5"><span>{t("MP")}</span><span>{playerStats.精神力}/{playerStats.最大精神力}</span></div>
                      <div className="h-2 bg-zinc-800"><div className="h-full bg-purple-600" style={{ width: `${(playerStats.精神力/playerStats.最大精神力)*100}%`}} /></div>
                  </div>
              </div>
@@ -261,20 +263,20 @@ export const CombatPanel: React.FC<CombatPanelProps> = ({
          <div className="flex-1 p-4 md:p-6 bg-zinc-900 overflow-y-auto custom-scrollbar">
              {menuLevel === 'MAIN' ? (
                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 h-full">
-                    <CombatButton label="攻击" icon={<Sword/>} onClick={() => handleTargetedAction('attack')} color="bg-red-700 hover:bg-red-600" />
-                    <CombatButton label="技能" icon={<Zap/>} onClick={() => setMenuLevel('SKILLS')} color="bg-blue-700 hover:bg-blue-600" />
-                    <CombatButton label="物品" icon={<Package/>} onClick={() => setMenuLevel('ITEMS')} color="bg-green-700 hover:bg-green-600" />
-                    <CombatButton label="防御" icon={<Shield/>} onClick={() => handleTargetedAction('guard')} color="bg-yellow-700 hover:bg-yellow-600" />
-                    <CombatButton label="自由行动" icon={<MessageSquare/>} onClick={() => setMenuLevel('TALK')} color="bg-pink-700 hover:bg-pink-600" />
-                    <CombatButton label="逃跑" icon={<AlertTriangle/>} onClick={() => onPlayerAction('escape')} color="bg-zinc-700 hover:bg-zinc-600" />
+                    <CombatButton label={t("CMD_ATTACK")} icon={<Sword/>} onClick={() => handleTargetedAction('attack')} color="bg-red-700 hover:bg-red-600" />
+                    <CombatButton label={t("CMD_SKILL")} icon={<Zap/>} onClick={() => setMenuLevel('SKILLS')} color="bg-blue-700 hover:bg-blue-600" />
+                    <CombatButton label={t("CMD_ITEM")} icon={<Package/>} onClick={() => setMenuLevel('ITEMS')} color="bg-green-700 hover:bg-green-600" />
+                    <CombatButton label={t("CMD_GUARD")} icon={<Shield/>} onClick={() => handleTargetedAction('guard')} color="bg-yellow-700 hover:bg-yellow-600" />
+                    <CombatButton label={t("CMD_TALK")} icon={<MessageSquare/>} onClick={() => setMenuLevel('TALK')} color="bg-pink-700 hover:bg-pink-600" />
+                    <CombatButton label={t("CMD_ESCAPE")} icon={<AlertTriangle/>} onClick={() => onPlayerAction('escape')} color="bg-zinc-700 hover:bg-zinc-600" />
                  </div>
              ) : menuLevel === 'SKILLS' ? (
                  <div className="h-full flex flex-col">
-                     <SubMenuHeader title="选择技能 / 魔法" onBack={() => setMenuLevel('MAIN')} />
+                     <SubMenuHeader title={t("SELECT_SKILL_MAGIC")} onBack={() => setMenuLevel('MAIN')} t={t} />
                      <div className="flex-1 overflow-y-auto space-y-3 pr-2">
                          {skills.length > 0 && (
                              <div className="space-y-2">
-                                 <div className="text-[10px] uppercase tracking-[0.35em] text-blue-400">技能</div>
+                                 <div className="text-[10px] uppercase tracking-[0.35em] text-blue-400">{t("SKILLS")}</div>
                                  {skills.map(skill => (
                                      <button 
                                         key={skill.id}
@@ -296,7 +298,7 @@ export const CombatPanel: React.FC<CombatPanelProps> = ({
                          )}
                          {magic.length > 0 && (
                              <div className="space-y-2">
-                                 <div className="text-[10px] uppercase tracking-[0.35em] text-cyan-400">魔法</div>
+                                 <div className="text-[10px] uppercase tracking-[0.35em] text-cyan-400">{t("MAGIC")}</div>
                                  {magic.map(spell => (
                                      <button 
                                         key={spell.id}
@@ -317,13 +319,13 @@ export const CombatPanel: React.FC<CombatPanelProps> = ({
                              </div>
                          )}
                          {skills.length === 0 && magic.length === 0 && (
-                             <div className="text-zinc-500 text-center py-4">暂无可用技能/魔法</div>
+                             <div className="text-zinc-500 text-center py-4">{t("NO_SKILLS_MAGIC")}</div>
                          )}
                      </div>
                  </div>
              ) : menuLevel === 'ITEMS' ? (
                 <div className="h-full flex flex-col">
-                    <SubMenuHeader title="选择消耗品" onBack={() => setMenuLevel('MAIN')} />
+                    <SubMenuHeader title={t("SELECT_ITEM")} onBack={() => setMenuLevel('MAIN')} t={t} />
                     <div className="flex-1 overflow-y-auto space-y-2 pr-2">
                         {validConsumables.length > 0 ? validConsumables.map(item => (
                             <button 
@@ -334,22 +336,22 @@ export const CombatPanel: React.FC<CombatPanelProps> = ({
                                 <span className="text-white font-bold text-sm">{item.名称}</span>
                                 <span className="text-zinc-400 font-mono text-xs">x{item.数量}</span>
                             </button>
-                        )) : <div className="text-zinc-500 text-center py-4">背包中无消耗品</div>}
+                        )) : <div className="text-zinc-500 text-center py-4">{t("NO_ITEMS")}</div>}
                     </div>
                 </div>
             ) : menuLevel === 'TALK' ? (
                 <div className="h-full flex flex-col">
-                    <SubMenuHeader title="自由行动描述" onBack={() => setMenuLevel('MAIN')} />
+                    <SubMenuHeader title={t("DESCRIBE_ACTION")} onBack={() => setMenuLevel('MAIN')} t={t} />
                     <form onSubmit={handleFreeActionSubmit} className="flex-1 flex flex-col gap-4 pt-2">
                         <textarea 
                             value={freeActionInput}
                             onChange={(e) => setFreeActionInput(e.target.value)}
-                            placeholder="描述你想做的特别行动（如：利用地形跳跃、投掷沙土干扰、尝试说服...）"
+                            placeholder={t("ACTION_PLACEHOLDER")}
                             className="flex-1 bg-black border border-zinc-700 p-3 text-sm text-white resize-none focus:border-blue-500 outline-none"
                             autoFocus
                         />
                         <button type="submit" className="bg-pink-700 hover:bg-pink-600 text-white py-2 font-bold uppercase tracking-widest">
-                            执行行动
+                            {t("EXECUTE_ACTION")}
                         </button>
                     </form>
                 </div>
@@ -371,11 +373,11 @@ const CombatButton = ({ label, icon, onClick, color }: any) => (
     </button>
 );
 
-const SubMenuHeader = ({ title, onBack }: { title: string, onBack: () => void }) => (
+const SubMenuHeader = ({ title, onBack, t }: { title: string, onBack: () => void, t: any }) => (
     <div className="flex justify-between items-center mb-4 border-b border-zinc-700 pb-2">
         <h4 className="text-white font-bold uppercase tracking-wider">{title}</h4>
         <button type="button" onClick={onBack} className="text-zinc-400 hover:text-white flex items-center gap-1 text-xs uppercase font-bold">
-            <X size={14}/> 返回
+            <X size={14}/> {t("BACK")}
         </button>
     </div>
 );

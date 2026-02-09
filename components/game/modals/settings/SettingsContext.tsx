@@ -364,10 +364,10 @@ export const SettingsContext: React.FC<SettingsContextProps> = ({ settings, onUp
                                                         <div className="text-[10px] text-gray/70">OFF: ONLY WHEN TRIGGERED</div>
                                                     </div>
                                                     <button 
-                                                        onClick={() => handleUpdateParams(activeModule.id, 'alwaysIncludeDungeon', !activeModule.params.alwaysIncludeDungeon)}
-                                                        className={`${activeModule.params.alwaysIncludeDungeon ? 'text-cta' : 'text-gray'}`}
+                                                        onClick={() => handleUpdateParams(activeModule.id, 'alwaysIncludeWasteland', !activeModule.params.alwaysIncludeWasteland)}
+                                                        className={`${activeModule.params.alwaysIncludeWasteland ? 'text-cta' : 'text-gray'}`}
                                                     >
-                                                        {activeModule.params.alwaysIncludeDungeon ? <ToggleRight size={20}/> : <ToggleLeft size={20}/>}
+                                                        {activeModule.params.alwaysIncludeWasteland ? <ToggleRight size={20}/> : <ToggleLeft size={20}/>}
                                                     </button>
                                                 </div>
                                                 <div className="bg-void p-3 border border-steel-gray rounded">

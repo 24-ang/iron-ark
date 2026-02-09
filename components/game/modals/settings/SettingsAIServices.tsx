@@ -9,45 +9,33 @@ interface SettingsAIServicesProps {
     onSave?: (newSettings: GlobalAISettings) => void;
 }
 
-export const SettingsAIServices: React.FC<SettingsAIServicesProps> = ({ settings, onUpdate, onSave }) => {
-    const [localConfig, setLocalConfig] = useState<GlobalAISettings>(settings);
+export const SettingsAIServices: React.FC<SettingsAIServicesProps> = ({ settings, onUpdate }) => {
     const [activeTab, setActiveTab] = useState<'SOCIAL' | 'WORLD' | 'PHONE' | 'NPC_SYNC' | 'NPC_BRAIN'>('SOCIAL');
-    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-    useEffect(() => {
-        setLocalConfig(settings);
-        setHasUnsavedChanges(false);
-    }, [settings]);
+    // Helper to update settings immediately
+    const updateSettings = (newSettings: GlobalAISettings) => {
+        onUpdate(newSettings);
+    };
 
     const handleConfigChange = (newConfig: AIEndpointConfig, path: string) => {
-        const nextState = JSON.parse(JSON.stringify(localConfig));
+        const nextState = JSON.parse(JSON.stringify(settings));
         if (path === 'unified') {
             nextState.unified = newConfig;
         } else {
             nextState.services[path] = newConfig;
         }
-        setLocalConfig(nextState);
-        setHasUnsavedChanges(true);
+        updateSettings(nextState);
     };
 
     const handleOverrideToggle = (enabled: boolean) => {
-        setLocalConfig(prev => ({ ...prev, useServiceOverrides: enabled }));
-        setHasUnsavedChanges(true);
+        updateSettings({ ...settings, useServiceOverrides: enabled });
     };
 
     const handleServiceOverrideToggle = (key: keyof GlobalAISettings['services'], enabled: boolean) => {
-        const nextState = JSON.parse(JSON.stringify(localConfig));
+        const nextState = JSON.parse(JSON.stringify(settings));
         if (!nextState.serviceOverridesEnabled) nextState.serviceOverridesEnabled = {};
         nextState.serviceOverridesEnabled[key] = enabled;
-        setLocalConfig(nextState);
-        setHasUnsavedChanges(true);
-    };
-
-    const saveChanges = () => {
-        if (onSave) onSave(localConfig);
-        else onUpdate(localConfig);
-        setHasUnsavedChanges(false);
-        alert("API Configuration Saved");
+        updateSettings(nextState);
     };
 
     return (
@@ -57,16 +45,6 @@ export const SettingsAIServices: React.FC<SettingsAIServicesProps> = ({ settings
                     <Cpu className="text-cta" />
                     <h3 className="text-2xl font-display uppercase italic text-cta">API CONFIGURATION</h3>
                 </div>
-                <button 
-                    onClick={saveChanges}
-                    disabled={!hasUnsavedChanges}
-                    className={`flex items-center gap-2 px-4 py-2 font-bold uppercase transition-all shadow-md btn
-                        ${hasUnsavedChanges ? 'border-amber text-amber hover:bg-amber-900/20' : 'border-steel-gray text-steel-gray cursor-not-allowed'}
-                    `}
-                >
-                    {hasUnsavedChanges ? <Save size={18} /> : <Check size={18} />}
-                    {hasUnsavedChanges ? "SAVE CHANGES" : "SYNCED"}
-                </button>
             </div>
             
             <div className="panel p-6 border border-steel-gray shadow-sm flex-1 overflow-y-auto custom-scrollbar bg-black/20">
@@ -74,7 +52,7 @@ export const SettingsAIServices: React.FC<SettingsAIServicesProps> = ({ settings
                     <label className="block text-xs font-bold uppercase mb-2 text-gray">MAIN API (DEFAULT)</label>
                     <AIConfigForm 
                         label="MAIN API CONFIG"
-                        config={localConfig.unified}
+                        config={settings.unified}
                         onChange={(c) => handleConfigChange(c, 'unified')}
                     />
                 </div>
@@ -83,7 +61,7 @@ export const SettingsAIServices: React.FC<SettingsAIServicesProps> = ({ settings
                     <input
                         type="checkbox"
                         id="enableServiceOverrides"
-                        checked={localConfig.useServiceOverrides === true}
+                        checked={settings.useServiceOverrides === true}
                         onChange={e => handleOverrideToggle(e.target.checked)}
                         className="w-4 h-4 text-cta border-steel-gray rounded focus:ring-cta bg-void"
                     />
@@ -96,11 +74,9 @@ export const SettingsAIServices: React.FC<SettingsAIServicesProps> = ({ settings
                     <input
                         type="checkbox"
                         id="nativeThinkingChain"
-                        checked={localConfig.nativeThinkingChain !== false}
+                        checked={settings.nativeThinkingChain !== false}
                         onChange={e => {
-                            const newConfig = { ...localConfig, nativeThinkingChain: e.target.checked };
-                            setLocalConfig(newConfig);
-                            setHasUnsavedChanges(true);
+                            updateSettings({ ...settings, nativeThinkingChain: e.target.checked });
                         }}
                         className="w-4 h-4 text-cta border-steel-gray rounded focus:ring-cta bg-void"
                     />
@@ -112,11 +88,9 @@ export const SettingsAIServices: React.FC<SettingsAIServicesProps> = ({ settings
                     <input
                         type="checkbox"
                         id="multiStageThinking"
-                        checked={localConfig.multiStageThinking === true}
+                        checked={settings.multiStageThinking === true}
                         onChange={e => {
-                            const newConfig = { ...localConfig, multiStageThinking: e.target.checked };
-                            setLocalConfig(newConfig);
-                            setHasUnsavedChanges(true);
+                            updateSettings({ ...settings, multiStageThinking: e.target.checked });
                         }}
                         className="w-4 h-4 text-cta border-steel-gray rounded focus:ring-cta bg-void"
                     />
@@ -125,7 +99,7 @@ export const SettingsAIServices: React.FC<SettingsAIServicesProps> = ({ settings
                     </label>
                 </div>
 
-                {localConfig.useServiceOverrides === true ? (
+                {settings.useServiceOverrides === true ? (
                     <div>
                         <div className="flex border-b border-steel-gray mb-4 overflow-x-auto">
                             {(['SOCIAL', 'WORLD', 'PHONE', 'NPC_SYNC', 'NPC_BRAIN'] as const).map(tab => (
@@ -142,46 +116,46 @@ export const SettingsAIServices: React.FC<SettingsAIServicesProps> = ({ settings
                         {activeTab === 'SOCIAL' && (
                             <ServiceOverridePanel
                                 label="SOCIAL"
-                                enabled={localConfig.serviceOverridesEnabled?.social === true}
+                                enabled={settings.serviceOverridesEnabled?.social === true}
                                 onToggle={(enabled) => handleServiceOverrideToggle('social', enabled)}
                             >
-                                <AIConfigForm config={localConfig.services.social} onChange={(c) => handleConfigChange(c, 'social')} disabled={localConfig.serviceOverridesEnabled?.social !== true} />
+                                <AIConfigForm config={settings.services.social} onChange={(c) => handleConfigChange(c, 'social')} disabled={settings.serviceOverridesEnabled?.social !== true} />
                             </ServiceOverridePanel>
                         )}
                         {activeTab === 'WORLD' && (
                             <ServiceOverridePanel
                                 label="WORLD"
-                                enabled={localConfig.serviceOverridesEnabled?.world === true}
+                                enabled={settings.serviceOverridesEnabled?.world === true}
                                 onToggle={(enabled) => handleServiceOverrideToggle('world', enabled)}
                             >
-                                <AIConfigForm config={localConfig.services.world} onChange={(c) => handleConfigChange(c, 'world')} disabled={localConfig.serviceOverridesEnabled?.world !== true} />
+                                <AIConfigForm config={settings.services.world} onChange={(c) => handleConfigChange(c, 'world')} disabled={settings.serviceOverridesEnabled?.world !== true} />
                             </ServiceOverridePanel>
                         )}
                         {activeTab === 'PHONE' && (
                             <ServiceOverridePanel
                                 label="PHONE"
-                                enabled={localConfig.serviceOverridesEnabled?.phone === true}
+                                enabled={settings.serviceOverridesEnabled?.phone === true}
                                 onToggle={(enabled) => handleServiceOverrideToggle('phone', enabled)}
                             >
-                                <AIConfigForm config={localConfig.services.phone || localConfig.unified} onChange={(c) => handleConfigChange(c, 'phone')} disabled={localConfig.serviceOverridesEnabled?.phone !== true} />
+                                <AIConfigForm config={settings.services.phone || settings.unified} onChange={(c) => handleConfigChange(c, 'phone')} disabled={settings.serviceOverridesEnabled?.phone !== true} />
                             </ServiceOverridePanel>
                         )}
                         {activeTab === 'NPC_SYNC' && (
                             <ServiceOverridePanel
                                 label="NPC SYNC"
-                                enabled={localConfig.serviceOverridesEnabled?.npcSync === true}
+                                enabled={settings.serviceOverridesEnabled?.npcSync === true}
                                 onToggle={(enabled) => handleServiceOverrideToggle('npcSync', enabled)}
                             >
-                                <AIConfigForm config={localConfig.services.npcSync} onChange={(c) => handleConfigChange(c, 'npcSync')} disabled={localConfig.serviceOverridesEnabled?.npcSync !== true} />
+                                <AIConfigForm config={settings.services.npcSync} onChange={(c) => handleConfigChange(c, 'npcSync')} disabled={settings.serviceOverridesEnabled?.npcSync !== true} />
                             </ServiceOverridePanel>
                         )}
                         {activeTab === 'NPC_BRAIN' && (
                             <ServiceOverridePanel
                                 label="NPC BRAIN"
-                                enabled={localConfig.serviceOverridesEnabled?.npcBrain === true}
+                                enabled={settings.serviceOverridesEnabled?.npcBrain === true}
                                 onToggle={(enabled) => handleServiceOverrideToggle('npcBrain', enabled)}
                             >
-                                <AIConfigForm config={localConfig.services.npcBrain} onChange={(c) => handleConfigChange(c, 'npcBrain')} disabled={localConfig.serviceOverridesEnabled?.npcBrain !== true} />
+                                <AIConfigForm config={settings.services.npcBrain} onChange={(c) => handleConfigChange(c, 'npcBrain')} disabled={settings.serviceOverridesEnabled?.npcBrain !== true} />
                             </ServiceOverridePanel>
                         )}
                     </div>

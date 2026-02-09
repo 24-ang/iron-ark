@@ -224,12 +224,12 @@ If this is your first time in the wasteland, check the [STATUS] panel to confirm
         ],
         游戏时间: "第1日 08:00",
         当前日期: "2155-05-20",
-        当前地点: "钢铁方舟 - 外围", // Iron Ark Outskirts
+        当前地点: "Iron Ark - Outskirts", // Changed to English
         当前区域: 1,
         势力: { 名称: "无", 等级: "I", 领袖: "", 资金: 0, 设施状态: {}, 仓库: [] }, // Initialize Faction
         避难所: null,
         眷族: null, // Legacy null
-        天气: "辐射尘暴 (轻微)",
+        天气: "Radiation Dust Storm (Light)",
         辐射等级: '低',
         当前楼层: 1, // Legacy compatibility
         

@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
-import { Clock, MapPin, Grid, CloudRain, Layers, Sun, Maximize2, Minimize2 } from 'lucide-react';
+import { Clock, MapPin, Grid, CloudRain, Layers, Sun, Maximize2, Minimize2, Languages } from 'lucide-react';
 import { GeoPoint } from '../../types';
+import { useLanguage } from './LanguageContext';
 
 interface TopNavProps {
   time: string;
@@ -14,6 +14,7 @@ interface TopNavProps {
 
 export const TopNav: React.FC<TopNavProps> = ({ time, location, floor, weather, coords, isHellMode }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const { language, toggleLanguage, t } = useLanguage();
 
   const toggleFullscreen = () => {
       if (!document.fullscreenElement) {
@@ -39,23 +40,42 @@ export const TopNav: React.FC<TopNavProps> = ({ time, location, floor, weather, 
   }, []);
 
   // Parse time string "第X日 HH:MM"
-  let dayStr = "DAY 1";
+  let dayStr = language === 'zh' ? "第1日" : "DAY 1";
   let timeStr = "00:00";
-  let fullDateStr = "1000-01-01";
+  let fullDateStr = "2155-05-20";
   
-  const match = time.match(/第(\d+)日\s+(\d{2}:\d{2})/);
+  // Robust parsing: handle optional spaces around "第" and "日"
+  const match = time.match(/第\s*(\d+)\s*日\s+(\d{2}:\d{2})/);
+  
   if (match) {
-      dayStr = `DAY ${match[1]}`;
+      dayStr = language === 'zh' 
+        ? `第${match[1]}日`
+        : `DAY ${match[1]}`;
       timeStr = match[2];
       
-      const start = new Date("1000-01-01");
+      const start = new Date("2155-05-20");
       start.setDate(start.getDate() + (parseInt(match[1]) - 1));
       fullDateStr = start.toISOString().split('T')[0];
   } else {
       if(time.includes(' ')) {
         const p = time.split(' ');
-        dayStr = p[0];
-        timeStr = p[1];
+        // If the first part looks like "第X日", convert it
+        const dayPart = p[0];
+        const dayNum = dayPart.match(/\d+/);
+        
+        if ((dayPart.includes('第') || dayPart.includes('日')) && dayNum) {
+            dayStr = language === 'zh' 
+                ? `第${dayNum[0]}日`
+                : `DAY ${dayNum[0]}`;
+            
+            const start = new Date("2155-05-20");
+            start.setDate(start.getDate() + (parseInt(dayNum[0]) - 1));
+            fullDateStr = start.toISOString().split('T')[0];
+        } else {
+            dayStr = p[0];
+        }
+        
+        if (p[1]) timeStr = p[1];
       }
   }
 
@@ -94,10 +114,10 @@ export const TopNav: React.FC<TopNavProps> = ({ time, location, floor, weather, 
           </div>
         </div>
 
-        {/* Center: Location */}
+        {/* Center: Location - Brighter */}
         <div className="flex items-center gap-2 flex-1 justify-center">
-          <MapPin size={14} className="text-amber" />
-          <span className="terminal-text text-amber amber-glow text-sm md:text-base font-bold tracking-wider truncate max-w-xs">
+          <MapPin size={14} className="text-amber-400" />
+          <span className="terminal-text text-amber-300 text-sm md:text-base font-bold tracking-wider truncate max-w-xs" style={{textShadow: '0 0 10px rgba(251, 191, 36, 0.5)'}}>
             {location}
           </span>
         </div>
@@ -105,8 +125,8 @@ export const TopNav: React.FC<TopNavProps> = ({ time, location, floor, weather, 
         {/* Right: Floor + Weather + Coords */}
         <div className="flex items-center gap-3 md:gap-4">
           <div className="flex items-center gap-1.5">
-            <Layers size={12} className="text-zinc-500" />
-            <span className="text-zinc-400 text-xs md:text-sm font-mono">
+            <Layers size={12} className="text-zinc-400" />
+            <span className="text-zinc-300 text-xs md:text-sm font-mono">
               F{floor}
             </span>
           </div>
@@ -115,11 +135,11 @@ export const TopNav: React.FC<TopNavProps> = ({ time, location, floor, weather, 
 
           <div className="hidden md:flex items-center gap-1.5">
             {weather.includes('晴') || weather.includes('Clear') ? (
-              <Sun size={12} className="text-amber" />
+              <Sun size={12} className="text-amber-400" />
             ) : (
-              <CloudRain size={12} className="text-cyan-500" />
+              <CloudRain size={12} className="text-cyan-400" />
             )}
-            <span className="text-zinc-400 text-xs md:text-sm font-mono truncate max-w-[100px]">
+            <span className="text-zinc-300 text-xs md:text-sm font-mono truncate max-w-[100px]">
               {weather}
             </span>
           </div>
@@ -127,11 +147,13 @@ export const TopNav: React.FC<TopNavProps> = ({ time, location, floor, weather, 
           <div className="h-8 w-px bg-zinc-800 hidden md:block" />
 
           <div className="hidden md:flex items-center gap-1.5">
-            <Grid size={12} className="text-zinc-600" />
-            <span className="text-zinc-500 text-[10px] md:text-xs font-mono">
+            <Grid size={12} className="text-zinc-500" />
+            <span className="text-zinc-400 text-[10px] md:text-xs font-mono">
               {coordsString}
             </span>
           </div>
+
+
 
           <button
             onClick={toggleFullscreen}

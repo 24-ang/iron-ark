@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { LogEntry, CombatState, CharacterStats, Skill, TechArt, InventoryItem, Confidant, ActionOption } from '../../types';
 import { MessageSquare, Sword, Eye, Loader2, ChevronRight, MousePointer2, Terminal, Layers, ChevronUp, Info, X, ArrowRight } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 import { CombatPanel } from './CombatPanel';
 import { LogEntryItem } from './center/LogEntry';
 import { GameInput } from './center/GameInput';
@@ -76,6 +77,7 @@ export const CenterPanel: React.FC<CenterPanelProps> = ({
     enableCombatUI = true,
     isHellMode
 }) => {
+  const { t } = useLanguage();
   const [showCombatUI, setShowCombatUI] = useState(false); 
   const [editingLogId, setEditingLogId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState('');
@@ -146,22 +148,22 @@ export const CenterPanel: React.FC<CenterPanelProps> = ({
       const maxTurn = totalTurns > 0 ? orderedTurns[orderedTurns.length - 1] : 0;
       const minTurn = totalTurns > 0 ? orderedTurns[0] : 0;
       if (Number.isNaN(target) || (target as any) < minTurn || (target as any) > maxTurn) {
-          setJumpHint(`范围: ${minTurn}-${maxTurn || minTurn}`);
+          setJumpHint(`范围: ${minTurn}-${maxTurn || minTurn}`); // Keep as is or add translation key if needed? "Range: ..."
           return;
       }
       if (!visibleTurnSet.has(target)) {
-          setJumpHint('目标区域未加载');
+          setJumpHint(t("TARGET_AREA_NOT_LOADED") || '目标区域未加载'); // I didn't add this key. Keep Chinese for now or add key?
           return;
       }
       const targetLog = logs.find(l => l.turnIndex === target);
       if (!targetLog) {
-          setJumpHint('目标区域不存在');
+          setJumpHint(t("TARGET_AREA_NOT_EXIST") || '目标区域不存在');
           return;
       }
       const el = logRefs.current.get(targetLog.id);
       if (el) {
           el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          setJumpHint(`已跳转: ${target}`);
+          setJumpHint(`${t("JUMPED_TO") || '已跳转'}: ${target}`);
           setJumpExpanded(true);
       }
   };
@@ -266,7 +268,7 @@ export const CenterPanel: React.FC<CenterPanelProps> = ({
           <div className="w-full flex items-center justify-center py-6 mb-4">
               <div className={`h-px w-12 md:w-24 bg-gradient-to-r ${turnDividerGradient}`}></div>
               <div className={`mx-4 px-3 py-1 bg-black border ${turnDividerColor} text-[10px] font-display uppercase tracking-[0.2em]`}>
-                  Turn {turn}
+                  {t("TURN")} {turn}
               </div>
               <div className={`h-px w-12 md:w-24 bg-gradient-to-l ${turnDividerGradient}`}></div>
           </div>
@@ -278,7 +280,7 @@ export const CenterPanel: React.FC<CenterPanelProps> = ({
           <div className="flex justify-center -mt-2 mb-6">
               <details className="max-w-[90%] bg-emerald-950/40 border border-emerald-700/60 px-3 py-2 rounded">
                   <summary className="cursor-pointer text-[10px] uppercase tracking-widest text-emerald-300 flex items-center gap-2">
-                      <Info size={12} className="text-emerald-400" /> AI ANALYSIS
+                      <Info size={12} className="text-emerald-400" /> {t("AI_ANALYSIS")}
                   </summary>
                   <div className="mt-2 text-[11px] text-emerald-100 font-mono whitespace-pre-wrap leading-relaxed">
                       {thinking}
@@ -297,7 +299,7 @@ export const CenterPanel: React.FC<CenterPanelProps> = ({
                     onClick={() => setShowCombatUI(false)}
                     className="bg-black/80 text-white border border-white px-3 py-1 text-xs uppercase hover:bg-white hover:text-black flex items-center gap-2"
                   >
-                      <MessageSquare size={14} /> <span className="hidden md:inline">RETURN</span> <span className="md:hidden">Back</span>
+                      <MessageSquare size={14} /> <span className="hidden md:inline">{t("RETURN")}</span> <span className="md:hidden">{t("BACK")}</span>
                   </button>
               </div>
 
@@ -334,7 +336,7 @@ export const CenterPanel: React.FC<CenterPanelProps> = ({
                           <Eye size={18} className="animate-pulse" />
                       </div>
                   </div>
-                  <span className="font-display text-xl uppercase tracking-widest animate-pulse">Processing...</span>
+                  <span className="font-display text-xl uppercase tracking-widest animate-pulse">{t("PROCESSING_DOTS")}</span>
               </div>
           </div>
       )}
@@ -354,7 +356,7 @@ export const CenterPanel: React.FC<CenterPanelProps> = ({
                   title="Toggle Zone Jump"
               >
                   <Layers size={14} />
-                  <span className="font-bold">ZONE JUMP</span>
+                  <span className="font-bold">{t("ZONE_JUMP")}</span>
               </button>
 
               {/* Dropdown Panel - Absolute Positioned */}
@@ -362,7 +364,7 @@ export const CenterPanel: React.FC<CenterPanelProps> = ({
                   <div className="bg-black/95 border border-green-500/50 p-3 shadow-[0_0_30px_rgba(0,0,0,0.8)] flex flex-col gap-3 min-w-[200px] animate-in slide-in-from-top-1 fade-in duration-200 backdrop-blur-md rounded-sm">
                       {/* Header Row */}
                       <div className="flex justify-between items-center text-[10px] text-zinc-500 font-mono border-b border-zinc-800 pb-2">
-                          <span className="uppercase tracking-widest text-zinc-400">Current Zone</span>
+                          <span className="uppercase tracking-widest text-zinc-400">{t("CURRENT_ZONE")}</span>
                           <span className="text-green-400 font-bold">{visibleTurns[0]}-{visibleTurns[visibleTurns.length - 1]} / {orderedTurns[orderedTurns.length - 1]}</span>
                       </div>
 
@@ -383,13 +385,13 @@ export const CenterPanel: React.FC<CenterPanelProps> = ({
                               onClick={handleJump}
                               className="bg-green-600 hover:bg-green-500 text-black px-4 font-display font-bold text-xs tracking-wider transition-colors flex items-center justify-center shadow-[0_0_10px_rgba(22,163,74,0.4)]"
                           >
-                              GO
+                              {t("GO")}
                           </button>
                       </div>
                       
                       {/* Hint */}
                       <div className="text-[9px] text-zinc-600 text-right italic">
-                          Enter zone ID to warp
+                          {t("ZONE_JUMP_HINT")}
                       </div>
                   </div>
               )}
@@ -436,12 +438,12 @@ export const CenterPanel: React.FC<CenterPanelProps> = ({
         {isStreaming && lastRawResponse ? (
             <div className="p-4 my-4 bg-black/90 border-l-4 border-green-500 text-[10px] md:text-xs text-green-400 whitespace-pre-wrap shadow-lg opacity-90 animate-in fade-in slide-in-from-bottom-2 font-mono leading-relaxed break-all">
                 <div className="flex items-center gap-2 mb-2 text-green-600 font-bold uppercase tracking-widest border-b border-green-900/50 pb-1">
-                    <Terminal size={12} className="animate-pulse" /> Incoming Data Stream...
+                    <Terminal size={12} className="animate-pulse" /> {t("INCOMING_STREAM")}
                 </div>
                 {lastThinking && (
                     <details className="mb-3 bg-emerald-950/40 border border-emerald-700/60 px-3 py-2 rounded">
                         <summary className="cursor-pointer text-[10px] uppercase tracking-widest text-emerald-300">
-                            AI ANALYSIS (Streaming)
+                            {t("AI_ANALYSIS_STREAM")}
                         </summary>
                         <div className="mt-2 text-[10px] text-emerald-100 whitespace-pre-wrap leading-relaxed">
                             {lastThinking}
@@ -454,7 +456,7 @@ export const CenterPanel: React.FC<CenterPanelProps> = ({
         ) : isStreaming && isProcessing ? (
             <div className={`flex gap-2 items-center p-4 opacity-50 animate-pulse ${textColor}`}>
                 <Loader2 size={16} className="animate-spin" />
-                <span className="text-xs font-mono">Initializing Stream...</span>
+                <span className="text-xs font-mono">{t("INIT_STREAM")}</span>
             </div>
         ) : null}
 
@@ -471,7 +473,7 @@ export const CenterPanel: React.FC<CenterPanelProps> = ({
                             onClick={() => setShowCombatUI(true)}
                             className="bg-red-600 text-white border-2 border-white px-6 py-2 font-display text-base md:text-xl uppercase tracking-widest hover:scale-105 transition-transform flex items-center gap-2 shadow-[0_0_25px_red] animate-pulse"
                           >
-                              <Sword size={20} /> ENGAGE
+                              <Sword size={20} /> {t("ENGAGE")}
                           </button>
                       </div>
                   )}

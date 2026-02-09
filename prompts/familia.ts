@@ -17,7 +17,7 @@ export const P_FAMILIA_JOIN = `<派阀系统>
    - 当玩家成功加入派阀时，**必须**生成以下指令来初始化数据：
      - \`set gameState.角色.所属势力 "派阀名"\`
      - \`set gameState.避难所.名称 "派阀名"\` (如果玩家是获得了一个据点) 
-     - **或者** \`set gameState.眷族.名称 "派阀名"\` (兼容旧代码)
-     - \`set gameState.眷族.主神 "领袖名"\` (映射为派阀领袖)
+     - **或者** \`set gameState.势力.名称 "派阀名"\` (兼容旧代码)
+     - \`set gameState.势力.领袖 "领袖名"\` (映射为派阀领袖)
      - \`add gameState.任务[0].状态 "completed"\`
 </派阀系统>`;

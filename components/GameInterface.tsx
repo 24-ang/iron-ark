@@ -1,5 +1,5 @@
-
 import React, { useMemo, useState } from 'react';
+import { useLanguage } from './game/LanguageContext';
 import { GameState, Difficulty, InventoryItem } from '../types';
 import { TopNav } from './game/TopNav';
 import { LeftPanel } from './game/LeftPanel';
@@ -34,6 +34,7 @@ import { DynamicWorldModal } from './game/modals/DynamicWorldModal';
 import { MemorySummaryModal } from './game/modals/MemorySummaryModal';
 
 import { useGameLogic } from '../hooks/useGameLogic';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 
 interface GameInterfaceProps {
     onExit: () => void;
@@ -55,6 +56,10 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ onExit, initialSta
       phoneNotifications
   } = useGameLogic(initialState, onExit);
 
+  const { t } = useLanguage();
+
+  const isMobile = useMediaQuery('(max-width: 640px)');
+
   // Modal States
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [mobileActiveTab, setMobileActiveTab] = useState<'CHAT' | 'CHAR' | 'INV' | 'MAP' | 'MENU'>('CHAT');
@@ -74,7 +79,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ onExit, initialSta
 
   const queueEquipItem = (item: InventoryItem) => {
       const slotKey = item.装备槽位 || (item.类型 === 'weapon' ? '主手' : '身体');
-      addToQueue(`装备物品: ${item.名称}`, undefined, `equip_${slotKey}`, {
+      addToQueue(`${t("EQUIP_ITEM")}: ${item.名称}`, undefined, `equip_${slotKey}`, {
           kind: 'EQUIP',
           slotKey,
           itemId: item.id,
@@ -83,7 +88,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ onExit, initialSta
   };
 
   const queueUnequipItem = (slotKey: string, itemName?: string, itemId?: string) => {
-      addToQueue(`卸下装备: ${itemName || slotKey}`, undefined, `equip_${slotKey}`, {
+      addToQueue(`${t("UNEQUIP_ITEM")}: ${itemName || slotKey}`, undefined, `equip_${slotKey}`, {
           kind: 'UNEQUIP',
           slotKey,
           itemId,
@@ -92,7 +97,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ onExit, initialSta
   };
 
   const queueUseItem = (item: InventoryItem) => {
-      addToQueue(`使用物品: ${item.名称}`, undefined, undefined, {
+      addToQueue(`${t("USE_ITEM")}: ${item.名称}`, undefined, undefined, {
           kind: 'USE',
           itemId: item.id,
           itemName: item.名称,
@@ -169,6 +174,10 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ onExit, initialSta
       return next;
   }, [gameState, activeCommands]);
 
+  // Placeholder for unread messages/social for RightPanel
+  const hasUnreadMessages = false; // Implement actual logic based on gameState.手机
+  const hasUnreadSocial = false; // Implement actual logic based on gameState.社交
+
   return (
     <div 
         className="w-full h-dvh flex flex-col bg-boot overflow-hidden relative cassette-futurism-theme" 
@@ -194,12 +203,28 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ onExit, initialSta
         
         {/* Art Style Overlays - Wasteland Terminal Effect (Retained but subtle) */}
         <div className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')] animate-pulse z-0"></div>
-        <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.03] z-0">
-            <div className="w-full h-full bg-gradient-to-b from-transparent via-green-500/10 to-transparent animate-scanline"></div>
+        
+        {/* HUD Frame - Matching Menu Page Style */}
+        <div className="hud-frame">
+            <div className="corner-tl" />
+            <div className="corner-tr" />
+            <div className="corner-bl" />
+            <div className="corner-br" />
+            <div className="scan-line" />
         </div>
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.6)_100%)] z-0"></div>
 
-        <div className="flex flex-col h-full relative z-10">
+        {/* Background elements */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-green-900/10 via-black to-black z-0" />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 z-0 mix-blend-overlay" />
+        
+        {/* Art Style Overlays - Wasteland Terminal Effect (Retained but subtle) */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')] animate-pulse z-0"></div>
+
+
+        {/* Main Layout Grid - Desktop Only */}
+        {!isMobile && (
+        <div className="relative z-10 flex flex-col h-full">
+            {/* 1. Top Navigation & Status */}
             <TopNav 
                 time={gameState.游戏时间} 
                 location={gameState.当前地点} 
@@ -208,103 +233,23 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ onExit, initialSta
                 coords={gameState.世界坐标}
                 isHellMode={isHellMode}
             />
-            
-            <div className="flex-1 flex flex-row relative overflow-hidden p-4 gap-4">
-                <div className="contents animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    {/* Left Panel - Increased Width */}
-                    <div className="w-[22%] min-w-[300px] h-full flex flex-col">
-                        <LeftPanel stats={previewState.角色} isHellMode={isHellMode} difficulty={gameState.游戏难度} />
-                    </div>
-                    
-                    {/* Center Panel - Flex Grow */}
-                    <div className="flex-1 min-w-0 h-full">
-                        <CenterPanel 
-                            logs={gameState.日志} 
-                            combatState={gameState.战斗}
-                            playerStats={previewState.角色}
-                            skills={gameState.角色.技能}
-                            magic={gameState.角色.魔法}
-                            inventory={previewState.背包} 
-                            confidants={gameState.社交} 
-                            onSendMessage={handlePlayerInput}
-                            onReroll={handleReroll}
-                            lastRawResponse={lastAIResponse}
-                            lastThinking={lastAIThinking}
-                            onPlayerAction={handlePlayerAction}
-                            isProcessing={isProcessing}
-                            isStreaming={isStreaming}
-                            commandQueue={activeCommands}
-                            onRemoveCommand={isProcessing ? undefined : removeFromQueue}
-                            
-                            onEditLog={handleEditLog}
-                            onDeleteLog={handleDeleteLog}
-                            onEditUserLog={handleEditUserLog}
-                            onUpdateLogText={handleUpdateLogText}
-                            handleUserRewrite={handleUserRewrite}
-                            onStopInteraction={stopInteraction}
-                            draftInput={draftInput}
-                            setDraftInput={setDraftInput}
 
-                            actionOptions={currentOptions}
-                            fontSize={settings.fontSize}
-                            chatLogLimit={settings.chatLogLimit ?? 30}
-                            enableCombatUI={settings.enableCombatUI} 
-                            isHellMode={isHellMode}
-                        />
-                    </div>
-
-                    {/* Right Panel - Increased Width */}
-                    <div className="w-[18%] min-w-[240px] h-full flex flex-col">
-                        <RightPanel 
-                            onOpenInventory={() => setActiveModal('INVENTORY')}
-                            onOpenEquipment={() => setActiveModal('EQUIPMENT')}
-                            onOpenSettings={() => openSettings('MAIN')}
-                            onOpenSocial={() => setActiveModal('SOCIAL')}
-                            onOpenTasks={() => setActiveModal('TASKS')}
-                            onOpenSkills={() => setActiveModal('SKILLS')}
-                            onOpenMap={() => setActiveModal('MAP')}
-                            onOpenPhone={() => hasMagicPhone && setActiveModal('PHONE')}
-                            onOpenWorld={() => setActiveModal('WORLD')}
-                            onOpenFamilia={() => setActiveModal('FAMILIA')}
-                            onOpenStory={() => setActiveModal('STORY')}
-                            onOpenContract={() => setActiveModal('CONTRACT')}
-                            onOpenLoot={() => setActiveModal('LOOT')}
-                            onOpenLootVault={() => setActiveModal('LOOT_VAULT')}
-                            onOpenMemory={() => setActiveModal('MEMORY')}
-                            onOpenPresent={() => setActiveModal('PRESENT')}
-                            onOpenParty={() => setActiveModal('PARTY')}
-                            onOpenSaveManager={() => setActiveModal('SAVE_MANAGER')}
-                            isHellMode={isHellMode}
-                            hasPhone={hasMagicPhone}
-                            hasSignal={!isHellMode} // Assume signal if not hell mode for now, or track separately
-                            phoneProcessing={isPhoneProcessing}
-                            phoneProcessingScope={phoneProcessingScope}
-                        />
-                    </div>
+            {/* 2. Main Content Area - Grid Layout */}
+            <div className="flex-1 flex overflow-hidden relative">
+                {/* Left Panel: Character Status */}
+                <div className="w-[22%] min-w-[300px] h-full flex flex-col">
+                    <LeftPanel stats={previewState.角色} isHellMode={isHellMode} difficulty={gameState.游戏难度} />
                 </div>
-            </div>
-            <BottomBanner isHellMode={isHellMode} announcements={gameState.世界?.头条新闻} />
-        </div>
 
-        {/* Mobile View */}
-        <div className="hidden flex flex-col h-full w-full">
-            <MobileTopNav 
-                time={gameState.游戏时间} 
-                location={gameState.当前地点} 
-                floor={gameState.当前楼层} 
-                weather={gameState.天气}
-                coords={gameState.世界坐标}
-                isHellMode={isHellMode}
-            />
-            <div className="flex-1 relative overflow-hidden w-full">
-                 {mobileActiveTab === 'CHAT' && (
-                     <CenterPanel 
+                {/* Center Panel: Main Interaction */}
+                <div className="flex-1 min-w-0 h-full">
+                    <CenterPanel 
                         logs={gameState.日志} 
                         combatState={gameState.战斗}
                         playerStats={previewState.角色}
                         skills={gameState.角色.技能}
                         magic={gameState.角色.魔法}
-                        inventory={previewState.背包}
+                        inventory={previewState.背包} 
                         confidants={gameState.社交} 
                         onSendMessage={handlePlayerInput}
                         onReroll={handleReroll}
@@ -315,6 +260,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ onExit, initialSta
                         isStreaming={isStreaming}
                         commandQueue={activeCommands}
                         onRemoveCommand={isProcessing ? undefined : removeFromQueue}
+                        
                         onEditLog={handleEditLog}
                         onDeleteLog={handleDeleteLog}
                         onEditUserLog={handleEditUserLog}
@@ -323,27 +269,110 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ onExit, initialSta
                         onStopInteraction={stopInteraction}
                         draftInput={draftInput}
                         setDraftInput={setDraftInput}
+
                         actionOptions={currentOptions}
                         fontSize={settings.fontSize}
                         chatLogLimit={settings.chatLogLimit ?? 30}
-                        className="border-none w-full"
-                        enableCombatUI={settings.enableCombatUI}
+                        enableCombatUI={settings.enableCombatUI} 
+                        isHellMode={isHellMode}
+                    />
+                </div>
+
+                {/* Right Panel: Functional Menus */}
+                <div className="w-[18%] min-w-[240px] h-full flex flex-col">
+                    <RightPanel 
+                        onOpenInventory={() => setActiveModal('INVENTORY')}
+                        onOpenEquipment={() => setActiveModal('EQUIPMENT')}
+                        onOpenSettings={() => openSettings('MAIN')}
+                        onOpenSocial={() => setActiveModal('SOCIAL')}
+                        onOpenTasks={() => setActiveModal('TASKS')}
+                        onOpenSkills={() => setActiveModal('SKILLS')}
+                        onOpenMap={() => setActiveModal('MAP')}
+                        onOpenPhone={() => hasMagicPhone && setActiveModal('PHONE')}
+                        onOpenWorld={() => setActiveModal('WORLD')}
+                        onOpenFamilia={() => setActiveModal('FAMILIA')}
+                        onOpenStory={() => setActiveModal('STORY')}
+                        onOpenContract={() => setActiveModal('CONTRACT')}
+                        onOpenLoot={() => setActiveModal('LOOT')}
+                        onOpenLootVault={() => setActiveModal('LOOT_VAULT')}
+                        onOpenMemory={() => setActiveModal('MEMORY')}
+                        onOpenPresent={() => setActiveModal('PRESENT')}
+                        onOpenParty={() => setActiveModal('PARTY')}
+                        onOpenSaveManager={() => setActiveModal('SAVE_MANAGER')}
+                        isHellMode={isHellMode}
+                        hasPhone={hasMagicPhone}
+                        hasSignal={!isHellMode} 
+                        phoneProcessing={isProcessing} 
+                        phoneProcessingScope={phoneProcessingScope}
+                        hasUnreadMessages={hasUnreadMessages}
+                        hasUnreadSocial={hasUnreadSocial}
+                    />
+                </div>
+            </div>
+
+            {/* 3. Bottom Status Banner */}
+            <BottomBanner isHellMode={isHellMode} announcements={gameState.世界?.头条新闻} />
+        </div>
+        )}
+
+        {/* Mobile UI - Only visible on small screens */}
+        {isMobile && (
+        <div className="absolute inset-0 flex flex-col z-50 bg-black">
+            <MobileTopNav 
+                gameState={gameState} 
+                onExit={onExit} 
+                onOpenMenu={() => setMobileActiveTab('MENU')}
+            />
+            <div className="flex-1 overflow-hidden relative">
+                 {mobileActiveTab === 'CHAT' && (
+                    <CenterPanel 
+                        logs={gameState.日志} 
+                        combatState={gameState.战斗}
+                        playerStats={previewState.角色}
+                        skills={gameState.角色.技能}
+                        magic={gameState.角色.魔法}
+                        inventory={previewState.背包} 
+                        confidants={gameState.社交} 
+                        onSendMessage={handlePlayerInput}
+                        onReroll={handleReroll}
+                        lastRawResponse={lastAIResponse}
+                        lastThinking={lastAIThinking}
+                        onPlayerAction={handlePlayerAction}
+                        isProcessing={isProcessing}
+                        isStreaming={isStreaming}
+                        commandQueue={activeCommands}
+                        onRemoveCommand={isProcessing ? undefined : removeFromQueue}
+                        
+                        onEditLog={handleEditLog}
+                        onDeleteLog={handleDeleteLog}
+                        onEditUserLog={handleEditUserLog}
+                        onUpdateLogText={handleUpdateLogText}
+                        handleUserRewrite={handleUserRewrite}
+                        onStopInteraction={stopInteraction}
+                        draftInput={setDraftInput}
+                        setDraftInput={setDraftInput}
+
+                        actionOptions={currentOptions}
+                        fontSize={settings.fontSize}
+                        chatLogLimit={settings.chatLogLimit ?? 30}
+                        enableCombatUI={settings.enableCombatUI} 
                         isHellMode={isHellMode}
                     />
                  )}
-                 {mobileActiveTab === 'INV' && (
-                     <MobileInventoryView 
-                        items={previewState.背包}
-                        equipment={previewState.角色.装备}
-                        onEquipItem={queueEquipItem}
-                        onUnequipItem={queueUnequipItem}
-                        onUseItem={queueUseItem}
+                 {mobileActiveTab === 'CHAR' && (
+                     <LeftPanel 
+                        gameState={gameState} 
+                        characterId="player"
                      />
                  )}
-                 {mobileActiveTab === 'CHAR' && (
-                     <div className="h-full overflow-y-auto bg-zinc-950 p-4">
-                         <LeftPanel stats={previewState.角色} className="w-full border-none shadow-none" isHellMode={isHellMode} difficulty={gameState.游戏难度} />
-                     </div>
+                 {mobileActiveTab === 'INV' && (
+                     <MobileInventoryView 
+                        items={previewState.背包} 
+                        equipment={previewState.角色.装备} 
+                        onEquipItem={handleEquipItem} 
+                        onUnequipItem={queueUnequipItem} 
+                        onUseItem={queueUseItem}
+                     />
                  )}
                  {mobileActiveTab === 'MAP' && (
                      <MobileMapView 
@@ -382,6 +411,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({ onExit, initialSta
             </div>
             <MobileBottomNav onTabSelect={setMobileActiveTab} activeTab={mobileActiveTab} isHellMode={isHellMode} />
         </div>
+        )}
 
         {/* --- Modals --- */}
         {/* Modals remain mostly neutral in style, except where internal specific theming applies */}

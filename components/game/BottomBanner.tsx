@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Radio } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 
 interface BottomBannerProps {
   isHellMode?: boolean;
@@ -8,13 +9,14 @@ interface BottomBannerProps {
 }
 
 export const BottomBanner: React.FC<BottomBannerProps> = ({ isHellMode, announcements }) => {
+  const { t } = useLanguage();
   const accentText = isHellMode ? 'text-red-500' : 'text-green-500';
   const baseAnnouncements = Array.isArray(announcements)
     ? announcements.filter((item) => typeof item === 'string' && item.trim().length > 0)
     : [];
   const displayItems = baseAnnouncements.length > 0
-    ? baseAnnouncements.map((item) => `GUILD BROADCAST: ${item}`)
-    : ['GUILD BROADCAST: NO ACTIVE ALERTS'];
+    ? baseAnnouncements.map((item) => `${t("GUILD_BROADCAST")}: ${item}`)
+    : [`${t("GUILD_BROADCAST")}: ${t("NO_ACTIVE_ALERTS")}`];
   const loopItems = displayItems.length > 1 ? [...displayItems, ...displayItems] : displayItems;
 
   return (

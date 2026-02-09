@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { LanguageProvider } from './components/game/LanguageContext';
 import { Screen, GameState } from './types';
 import { StartScreen } from './components/StartScreen';
 import { Home } from './components/Home';
@@ -39,6 +40,7 @@ export default function App() {
   };
 
   return (
+    <LanguageProvider>
     <main className="cassette-futurism-theme w-full h-screen bg-black text-white font-sans antialiased overflow-hidden selection:bg-red-600 selection:text-white">
       {currentScreen === Screen.START && (
         <StartScreen onStart={bootSystem} />
@@ -59,5 +61,6 @@ export default function App() {
         <GameInterface onExit={exitGame} initialState={loadedState} />
       )}
     </main>
+    </LanguageProvider>
   );
 }

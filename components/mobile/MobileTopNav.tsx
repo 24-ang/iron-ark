@@ -1,18 +1,26 @@
 import React, { useState } from 'react';
-import { Clock, MapPin, Grid, CloudRain, Layers, Sun, Calendar, Maximize2, Minimize2 } from 'lucide-react';
-import { GeoPoint } from '../../types';
+import { Clock, MapPin, CloudRain, Sun, Maximize2, Minimize2, Menu } from 'lucide-react';
+import { GameState, Difficulty } from '../../types';
 
 interface MobileTopNavProps {
-    time: string;
-    location: string;
-    weather: string;
-    floor: number;
-    coords?: GeoPoint;
-    isHellMode?: boolean;
+    gameState: GameState;
+    onExit: () => void;
+    onOpenMenu: () => void;
 }
 
-export const MobileTopNav: React.FC<MobileTopNavProps> = ({ time, location, weather, floor, coords, isHellMode }) => {
+export const MobileTopNav: React.FC<MobileTopNavProps> = ({ gameState, onExit, onOpenMenu }) => {
     const [isFullscreen, setIsFullscreen] = useState(false);
+
+    const { 
+        游戏时间: time = "第1日 00:00", 
+        当前地点: location = "Unknown", 
+        天气: weather = "Clear", 
+        当前楼层: floor = 0, 
+        世界坐标: coords,
+        游戏难度: difficulty
+    } = gameState;
+
+    const isHellMode = difficulty === Difficulty.HELL;
 
     const toggleFullscreen = () => {
         if (!document.fullscreenElement) {
@@ -33,18 +41,21 @@ export const MobileTopNav: React.FC<MobileTopNavProps> = ({ time, location, weat
     let timeStr = "00:00";
     let fullDateStr = "1000-01-01";
     
-    const match = time.match(/第(\d+)日\s+(\d{2}:\d{2})/);
-    if (match) {
-        dayStr = `DAY ${match[1]}`;
-        timeStr = match[2];
-        const start = new Date("1000-01-01");
-        start.setDate(start.getDate() + (parseInt(match[1]) - 1));
-        fullDateStr = start.toISOString().split('T')[0];
-    } else {
-        if(time.includes(' ')) {
+    // Safety check for time string
+    if (time && typeof time === 'string') {
+        const match = time.match(/第(\d+)日\s+(\d{2}:\d{2})/);
+        if (match) {
+            dayStr = `DAY ${match[1]}`;
+            timeStr = match[2];
+            const start = new Date("1000-01-01");
+            start.setDate(start.getDate() + (parseInt(match[1]) - 1));
+            // fullDateStr = start.toISOString().split('T')[0]; // Optional: Keep formatting simple
+        } else if (time.includes(' ')) {
             const p = time.split(' ');
-            dayStr = p[0];
-            timeStr = p[1];
+            if (p.length >= 2) {
+                dayStr = p[0];
+                timeStr = p[1];
+            }
         }
     }
 
@@ -61,29 +72,35 @@ export const MobileTopNav: React.FC<MobileTopNavProps> = ({ time, location, weat
              {/* Decorative Top Border */}
             <div className={`absolute top-0 left-0 w-full h-[2px] ${accentBg} opacity-50`} />
 
-            {/* Left: Time & Date */}
-            <div className="flex flex-col gap-0.5">
-                <div className="flex items-center gap-2">
-                     <span className={`text-xs font-display font-bold ${textColor}`}>{dayStr}</span>
-                     <span className="text-[10px] font-mono text-zinc-500">{fullDateStr}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                    <Clock size={10} className="text-zinc-400" />
-                    <span className="text-sm font-display tracking-widest text-white leading-none">{timeStr}</span>
+            {/* Left: Menu Button & Time */}
+            <div className="flex items-center gap-3">
+                <button 
+                    onClick={onOpenMenu}
+                    className="p-1.5 text-zinc-400 hover:text-white border border-zinc-800 rounded bg-zinc-900/50"
+                >
+                    <Menu size={16} />
+                </button>
+                
+                <div className="flex flex-col gap-0.5">
+                    <div className="flex items-center gap-2">
+                         <span className={`text-xs font-display font-bold ${textColor}`}>{dayStr}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <Clock size={10} className="text-zinc-400" />
+                        <span className="text-sm font-display tracking-widest text-white leading-none">{timeStr}</span>
+                    </div>
                 </div>
             </div>
 
             {/* Center: Location */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none">
                 <div className="flex items-center gap-1">
                     <MapPin size={10} className={iconColor} />
-                    <span className={`text-sm font-display font-bold uppercase tracking-wide text-white truncate max-w-[120px]`}>
+                    <span className={`text-sm font-display font-bold uppercase tracking-wide text-white truncate max-w-[100px] text-center`}>
                         {location}
                     </span>
                 </div>
                 <div className="flex items-center gap-2 text-[9px] font-mono text-zinc-500">
-                    <span>{coordsString}</span>
-                    <span className="text-zinc-700">|</span>
                     <span>{floor > 0 ? `B${floor}F` : 'SURFACE'}</span>
                 </div>
             </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Command, X, RotateCcw, Loader2, Square } from 'lucide-react';
+import { useLanguage } from "../LanguageContext";
 import { CombatState } from '../../../types';
 
 interface GameInputProps {
@@ -29,6 +30,7 @@ export const GameInput: React.FC<GameInputProps> = ({
     enableCombatUI,
     isHellMode
 }) => {
+    const { t } = useLanguage();
     const [input, setInput] = useState('');
     const actionBtnSize = 'h-[52px] sm:h-[60px] w-[60px] sm:w-[70px]'; // Reduced from 90px
 
@@ -71,7 +73,7 @@ export const GameInput: React.FC<GameInputProps> = ({
                 <div className="mb-3 animate-in slide-in-from-bottom-2">
                     <div className="flex items-center gap-2 text-[10px] text-zinc-500 uppercase tracking-widest mb-2 font-bold">
                         <Command size={10} />
-                        USER COMMS
+                        {t("USER_COMMS")}
                     </div>
                     <div className="flex flex-wrap gap-2">
                         {commandQueue.map(cmd => (
@@ -84,8 +86,8 @@ export const GameInput: React.FC<GameInputProps> = ({
                                         onRemoveCommand?.(cmd.id);
                                     }}
                                     className="hover:text-amber-300"
-                                    title="Remove Command"
-                                    aria-label="Remove Command"
+                                    title={t("REMOVE_COMMAND")}
+                                    aria-label={t("REMOVE_COMMAND")}
                                 >
                                     <X size={12} />
                                 </button>
@@ -106,8 +108,8 @@ export const GameInput: React.FC<GameInputProps> = ({
                                     type="button"
                                     onClick={!isProcessing ? onReroll : undefined}
                                     disabled={isProcessing}
-                                    title="REROLL SYSTEM"
-                                    aria-label="REROLL SYSTEM"
+                                    title={t("REROLL_SYSTEM")}
+                                    aria-label={t("REROLL_SYSTEM")}
                                     className={`w-full h-full flex items-center justify-center transition-all
                                         ${isProcessing 
                                             ? 'opacity-50 cursor-not-allowed text-zinc-600' 
@@ -133,7 +135,7 @@ export const GameInput: React.FC<GameInputProps> = ({
                             <div className="flex justify-end px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                                 {isProcessing && (
                                     <span className="text-[9px] text-amber-500 animate-pulse font-mono tracking-widest uppercase">
-                                        /// PROCESSING ///
+                                        {t("PROCESSING_INDICATOR")}
                                     </span>
                                 )}
                             </div>
@@ -143,7 +145,7 @@ export const GameInput: React.FC<GameInputProps> = ({
                                     type="text"
                                     value={input}
                                     onChange={handleInputChange}
-                                    placeholder={isProcessing ? "PROCESSING..." : combatState.是否战斗中 ? (enableCombatUI ? "COMBAT ACTIVE | FREE ACTION..." : "COMBAT MODE | AWAITING COMMAND...") : "WHAT WILL YOU DO?"}
+                                    placeholder={isProcessing ? t("PROCESSING") : combatState.是否战斗中 ? (enableCombatUI ? t("COMBAT_FREE_ACTION") : t("COMBAT_AWAITING")) : t("INPUT_PLACEHOLDER")}
                                     disabled={isProcessing}
                                     className="flex-1 bg-transparent text-zinc-100 font-mono text-base px-2 py-1 outline-none placeholder-zinc-700 disabled:cursor-not-allowed tracking-wide"
                                     onKeyDown={(e) => {

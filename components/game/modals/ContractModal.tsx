@@ -72,7 +72,7 @@ export const ContractModal: React.FC<ContractModalProps> = ({ isOpen, onClose, c
                                 
                                 <div className="bg-[#e3d7c1] p-4 border border-[#c4b59d] text-xs font-mono text-[#5c4024] relative">
                                     <div className="absolute -top-2 left-4 bg-[#f0e6d2] px-2 font-bold uppercase text-[10px]">Terms of Agreement</div>
-                                    <p>{c.条款 || "By establishing this bond, I vow to provide assistance in your rebellion."}</p>
+                                    <p>{c.条款 || "By establishing this bond, I vow to provide mutual support and assistance in the wasteland."}</p>
                                 </div>
 
                                 <div className="mt-6 pt-4 border-t border-dashed border-black/30 flex justify-between items-end">

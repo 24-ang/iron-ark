@@ -23,7 +23,7 @@ export const P_COT_LOGIC = `<COT预思考协议>
   [玩家数据 (Player Data)] / [社交与NPC (Social & NPCs)] /
   [地图环境 (Map Context)] / [战斗状态 (Combat State)] /
   [背包物品 (Inventory)] / [战利品保管库 (Archived Loot)] / [公共战利品 (Public Loot - Carrier: ...)] /
-  [手机/消息 (Phone)] / [任务列表 (Quest Log)] / [眷族 (Familia)] /
+  [手机/消息 (Phone)] / [任务列表 (Quest Log)] / [势力 (Faction)] /
   [剧情进度 (Story Progress)] / [契约 (Contracts)] /
   [记忆流 (Memory Stream)] / [指令历史] / [玩家输入]
 - 未出现在上下文中的信息一律视为未知，禁止凭空补全变量或事实。

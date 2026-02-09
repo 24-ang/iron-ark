@@ -5,6 +5,7 @@ import { ShieldAlert, Cpu, Activity, Battery, AlertTriangle, Sparkles, Skull, Co
 import { VitalBar, StatRow } from './left/LeftPanelComponents';
 import { WireframeBody } from './left/WireframeBody';
 import { PanelBlock } from '../ui/PanelBlock';
+import { useLanguage } from './LanguageContext';
 
 interface LeftPanelProps {
   stats: CharacterStats;
@@ -69,6 +70,7 @@ const StatusBadge: React.FC<{ entry: StatusEffect | string; variant: 'buff' | 'c
 };
 
 export const LeftPanel: React.FC<LeftPanelProps> = ({ stats, className = '', isHellMode, difficulty }) => {
+  const { t } = useLanguage();
   const isNormalPlus = difficulty ? difficulty !== Difficulty.EASY : false;
   const showPhysiology = isNormalPlus && !!stats.身体部位;
 
@@ -83,7 +85,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({ stats, className = '', isH
       <div className="shrink-0 h-10 border-b border-green-900/50 bg-green-950/20 flex items-center px-4 justify-between relative">
           <div className="flex items-center gap-4">
               <div className="bg-green-900/30 px-2 py-0.5 text-green-400 font-mono text-xs border border-green-700/30">
-                  DAY 1
+                  {t("DAY")} 1
               </div>
               <div className="text-green-500 font-mono text-xs flex items-center gap-1">
                   <Activity size={12} className="animate-pulse" /> 08:00
@@ -100,7 +102,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({ stats, className = '', isH
       <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-3">
           
           {/* 1. PHYSIOLOGY (Injury) */}
-          <PanelBlock title="PHYSIOLOGY" icon={<Scan size={12} />}>
+          <PanelBlock title={t("PHYSIOLOGY")} icon={<Scan size={12} />}>
               <div className="flex gap-2 h-32">
                   {/* Wireframe */}
                   <div className="w-1/3 relative border-r border-green-900/30 pr-1">
@@ -110,13 +112,15 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({ stats, className = '', isH
                   <div className="flex-1 space-y-1 overflow-y-auto custom-scrollbar pr-1">
                        {stats.身体部位 && (
                            <>
-                               <BodyPartRow label="HEAD" data={stats.身体部位.头部} />
-                               <BodyPartRow label="CHEST" data={stats.身体部位.胸部} />
-                               <BodyPartRow label="CORE" data={stats.身体部位.腹部} />
-                               <BodyPartRow label="L.ARM" data={stats.身体部位.左臂} />
-                               <BodyPartRow label="R.ARM" data={stats.身体部位.右臂} />
-                               <BodyPartRow label="L.LEG" data={stats.身体部位.左腿} />
-                               <BodyPartRow label="R.LEG" data={stats.身体部位.右腿} />
+                           <>
+                               <BodyPartRow label={t("HEAD")} data={stats.身体部位.头部} />
+                               <BodyPartRow label={t("CHEST")} data={stats.身体部位.胸部} />
+                               <BodyPartRow label={t("CORE")} data={stats.身体部位.腹部} />
+                               <BodyPartRow label={t("L_ARM")} data={stats.身体部位.左臂} />
+                               <BodyPartRow label={t("R_ARM")} data={stats.身体部位.右臂} />
+                               <BodyPartRow label={t("L_LEG")} data={stats.身体部位.左腿} />
+                               <BodyPartRow label={t("R_LEG")} data={stats.身体部位.右腿} />
+                           </>
                            </>
                        )}
                   </div>
@@ -124,12 +128,12 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({ stats, className = '', isH
           </PanelBlock>
 
           {/* 2. MENTAL HEALTH (Status Bar + Fatigue) */}
-          <PanelBlock title="MENTAL HEALTH" icon={<Brain size={12} />}>
+          <PanelBlock title={t("MENTAL_HEALTH")} icon={<Brain size={12} />}>
               <div className="space-y-3">
                    {/* Fatigue */}
                   <div className="space-y-1">
                       <div className="flex justify-between text-[9px] uppercase text-zinc-500">
-                          <span className="flex items-center gap-1"><AlertTriangle size={10} /> FATIGUE</span>
+                          <span className="flex items-center gap-1"><AlertTriangle size={10} /> {t("FATIGUE")}</span>
                           <span>{stats.疲劳度 || 0}%</span>
                       </div>
                       <div className="h-1 bg-zinc-900 border border-zinc-800">
@@ -140,19 +144,19 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({ stats, className = '', isH
                   {/* Vitals Grid */}
                   <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-2">
-                           <VitalBar label="HP" current={stats.生命值} max={stats.最大生命值} color="bg-green-600" icon={<Heart size={10}/>} compact />
-                           <VitalBar label="MP" current={stats.精神力} max={stats.最大精神力} color="bg-emerald-600" icon={<Zap size={10}/>} compact />
-                           <VitalBar label="SP" current={stats.体力} max={stats.最大体力} color="bg-amber-600" icon={<Battery size={10}/>} compact />
+                           <VitalBar label={t("HP")} current={stats.生命值} max={stats.最大生命值} color="bg-green-600" icon={<Heart size={10}/>} compact />
+                           <VitalBar label={t("MP")} current={stats.精神力} max={stats.最大精神力} color="bg-emerald-600" icon={<Zap size={10}/>} compact />
+                           <VitalBar label={t("SP")} current={stats.体力} max={stats.最大体力} color="bg-amber-600" icon={<Battery size={10}/>} compact />
                       </div>
                       <div className="space-y-2">
                           {/* Currencies Box */}
                           <div className="bg-black border border-green-900/30 p-2 flex flex-col justify-between h-full">
                                <div className="flex justify-between items-center text-[10px]">
-                                   <span className="text-zinc-500">VALIS</span>
+                                   <span className="text-zinc-500">{t("VALIS")}</span>
                                    <span className="text-amber-500 font-mono">{stats.法利?.toLocaleString() || 0}</span>
                                </div>
                                <div className="flex justify-between items-center text-[10px]">
-                                   <span className="text-zinc-500">EXCELIA</span>
+                                   <span className="text-zinc-500">{t("EXCELIA")}</span>
                                    <span className="text-green-500 font-mono">{stats.经验值?.toLocaleString() || 0}</span>
                                </div>
                           </div>
@@ -162,22 +166,22 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({ stats, className = '', isH
           </PanelBlock>
 
           {/* 3. COMBAT STATS (Attributes) */}
-          <PanelBlock title="COMBAT STATS" icon={<Crosshair size={12} />}>
+          <PanelBlock title={t("COMBAT_STATS")} icon={<Crosshair size={12} />}>
               <div className="grid grid-cols-2 gap-x-4 gap-y-1">
                   {stats.能力值 && (
                       <>
-                        <StatRow label="PWR" val={stats.能力值.力量} />
-                        <StatRow label="STR" val={stats.能力值.耐久} />
-                        <StatRow label="CTR" val={stats.能力值.灵巧} />
-                        <StatRow label="MOB" val={stats.能力值.敏捷} />
-                        <StatRow label="NRG" val={stats.能力值.能源} />
+                        <StatRow label={t("PWR")} val={stats.能力值.力量} />
+                        <StatRow label={t("STR")} val={stats.能力值.耐久} />
+                        <StatRow label={t("CTR")} val={stats.能力值.灵巧} />
+                        <StatRow label={t("MOB")} val={stats.能力值.敏捷} />
+                        <StatRow label={t("NRG")} val={stats.能力值.能源} />
                       </>
                   )}
               </div>
           </PanelBlock>
 
           {/* 4. ABILITIES */}
-          <PanelBlock title="PERKS / ABILITIES" icon={<Sparkles size={12} />}>
+          <PanelBlock title={t("PERKS_ABILITIES")} icon={<Sparkles size={12} />}>
               <div className="min-h-[60px] max-h-[120px] overflow-y-auto custom-scrollbar space-y-1">
                   {stats.发展能力 && stats.发展能力.length > 0 ? (
                       stats.发展能力.map((da, i) => (
@@ -187,21 +191,21 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({ stats, className = '', isH
                           </div>
                       ))
                   ) : (
-                       <div className="text-[10px] text-zinc-600 italic text-center py-2">NO DATA</div>
+                       <div className="text-[10px] text-zinc-600 italic text-center py-2">{t("NO_DATA")}</div>
                   )}
               </div>
           </PanelBlock>
         
           {/* 5. LOADOUT */}
-          <PanelBlock title="LOADOUT" icon={<Shield size={12} />}>
+          <PanelBlock title={t("LOADOUT")} icon={<Shield size={12} />}>
               <div className="space-y-1">
                   {stats.装备 && (
                       <>
-                          <SimpleEquipSlot label="MAIN" slotKey="主手" stats={stats} icon={<Crosshair size={12}/>} />
-                          <SimpleEquipSlot label="SUB" slotKey="副手" stats={stats} icon={<ShieldAlert size={12}/>} />
-                          <SimpleEquipSlot label="HEAD" slotKey="头部" stats={stats} icon={<Scan size={12}/>} />
-                          <SimpleEquipSlot label="BODY" slotKey="身体" stats={stats} icon={<Cpu size={12}/>} />
-                          <SimpleEquipSlot label="ACC" slotKey="饰品" stats={stats} icon={<HardDrive size={12}/>} />
+                          <SimpleEquipSlot label={t("MAIN_HAND")} slotKey="主手" stats={stats} icon={<Crosshair size={12}/>} />
+                          <SimpleEquipSlot label={t("SUB_HAND")} slotKey="副手" stats={stats} icon={<ShieldAlert size={12}/>} />
+                          <SimpleEquipSlot label={t("HEAD")} slotKey="头部" stats={stats} icon={<Scan size={12}/>} />
+                          <SimpleEquipSlot label={t("BODY_SLOT")} slotKey="身体" stats={stats} icon={<Cpu size={12}/>} />
+                          <SimpleEquipSlot label={t("ACC_SLOT")} slotKey="饰品" stats={stats} icon={<HardDrive size={12}/>} />
                       </>
                   )}
               </div>

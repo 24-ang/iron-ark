@@ -2,9 +2,9 @@
 
 > **🏆 Built for Gemini 3 Global Hackathon | Google DeepMind**
 
-> **A post-apocalyptic text-based RPG powered by Google Gemini 3**
+> **A post-apocalyptic text-based RPG powered by Gemini 1.5 Pro**
 
-**Iron Ark** is an immersive AI-driven text adventure game set in a wasteland world. Built with a "narrative-instruction separation" architecture, it leverages the advanced context window of **Gemini 1.5 Pro/Flash** to deliver dynamic storytelling, complex state management, and emergent gameplay.
+**Iron Ark** is an immersive AI-driven text adventure game set in a wasteland world. Built with a "narrative-instruction separation" architecture, it leverages the advanced context window of **Gemini 1.5 Pro** (optimized for Gemini 3 Hackathon) to deliver dynamic storytelling, complex state management, and emergent gameplay.
 
 ---
 
@@ -18,7 +18,7 @@ This project showcases the power of **Gemini 3 API** through:
 - **🔄 Adaptive Difficulty**: AI-driven challenge scaling based on player performance
 - **💬 Natural Language Understanding**: Complex command parsing and intent recognition
 
-**Why Gemini 3?** The extended context window and improved reasoning capabilities enable persistent, coherent narratives across hundreds of player turns while maintaining complex game state, NPC memories, and world dynamics.
+**Why Gemini?** Standard RPGs rely on rigid scripts. Iron Ark relies on _hallucination_—controlled, weaponized hallucination. We use Gemini's 1M+ token context window not just for memory, but to build a psychological profile of the player. The wasteland doesn't just remember your inventory; **it remembers your sins**.
 
 ## 🎮 Game Features
 

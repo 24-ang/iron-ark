@@ -30,7 +30,7 @@ This project showcases the power of **Gemini 3 API** through:
 
 ## 🛠️ Tech Stack
 
-- **AI Engine**: Google Gemini 3 API (Gemini 1.5 Pro/Flash)
+- **AI Engine**: Google Gemini 3 API 
 - **Frontend**: React 18 + TypeScript + Vite
 - **Styling**: Tailwind CSS + Lucide Icons
 - **State Management**: Custom hooks with React Context
